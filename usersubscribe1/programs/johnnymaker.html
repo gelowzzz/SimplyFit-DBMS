@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johnny Sins Maker (Weight Loss)</title>
+</head>
+<body>
+    <table>
+
+        <thead>
+            <th>Exercise</th>
+            <th>Sets</th>
+            <th>Reps</th>
+            <th>Rest Period</th>        
+        </thead>
+
+        <tbody id="tbody1">
+
+        </tbody>
+
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script>
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        //import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        //import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+    
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+        apiKey: "AIzaSyD1UWbJgBRxJNNG-tBkmkvzBySHjOdG9Pw",
+        authDomain: "simplyfit-db-management-system.firebaseapp.com",
+        databaseURL: "https://simplyfit-db-management-system-default-rtdb.firebaseio.com",
+        projectId: "simplyfit-db-management-system",
+        storageBucket: "simplyfit-db-management-system.appspot.com",
+        messagingSenderId: "57064033809",
+        appId: "1:57064033809:web:405028c18a557d8d85ebb0"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        //------GET ALL DATA---------//
+        function SelectAllData(){
+            firebase.database().ref('WorkoutList').once(value, 
+            function(snapshot){
+                snapshot.forEach(
+                    function(childSnapshot){
+                        var exercise = childSnapshot.val().exercise;
+                        var sets = childSnapshot.val().sets;
+                        var reps = childSnapshot.val().reps;
+                        var rest = childSnapshot.val().restTime;
+
+                        AddItemsToTable(exercise, sets, reps, rest);
+
+
+                    }
+                );
+                
+            });
+        }
+
+        window.onload = SelectAllData;
+
+        //-------FILLING THE TABLE-------//
+        var inpNo = 0;
+        function AddItemsToTable(exercise, sets, reps, rest){
+            var tbody = document.getElementById('tbody1');
+            var trow = document.createElement('tr');
+            var td1 = document.createElement('td');
+            var td2 = document.createElement('td');
+            var td3 = document.createElement('td');
+            var td4 = document.createElement('td');
+            var td5 = document.createElement('td');
+            td1.innerHTML = ++inpNo;
+            td2.innerHTML = exercise;
+            td3.innerHTML = sets;
+            td4.innerHTML = reps;
+            td5.innerHTML = rest;
+
+            trow.appendChild(td1); trow.appendChild(td2); trow.appendChild(td3); trow.appendChild(td4); trow.appendChild(td5);
+            tbody.appendChild(trow);
+        }
+    </script>
+</body>
+</html>
