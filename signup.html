@@ -37,7 +37,7 @@
                 <label for="floatingRepeatPassword">Repeat Password</label>
             </div>
             
-			<a href="login.html"> <button type="button" class="btn btn-secondary me-2">Back to Login</button> </a>
+			<a href="login.html"> <button type="button" class="btn btn-secondary me-2" id="loginButton">Back to Login</button> </a>
             <button type="submit" class="btn btn-secondary" style="float:right">Register</button>
             
         </form>
@@ -114,7 +114,12 @@
             })
         }
 
+		function backToLogin(){
+			var loginButton = document.getElementById("loginButton");
+			loginButton.click();
+		}
         MainForm.addEventListener('submit', RegisterUser);
+        MainForm.addEventListener('submit', backToLogin);
 
       </script>
 
