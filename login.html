@@ -82,22 +82,26 @@
 
 		signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
 		.then((credentials)=>{
-			//console.log(credentials);
+			console.log(credentials);
 
 			//converts snapshot to JSON string
 			get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot)=>{
+				console.log("stringified");
 				if(snapshot.exists){
 					sessionStorage.setItem("user-info", JSON.stringify({
 						firstname: snapshot.val().firstname,
-						lastname: snapshot.val().lastname
+						lastname: snapshot.val().lastname						
 					}))
 					sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
-					window.location.href ='home.html';
+					console.log("logged in");
+					window.location.href ='homepage-logged-in.html';
+				} else {
+				console.log("creds dont exist");
 				}
 			})
 		})
 		.catch((error)=>{
-		alert("error here: ", error.message);
+		alert(error.message);
 		console.log(error.code);
 		console.log(error.message);
 		})
