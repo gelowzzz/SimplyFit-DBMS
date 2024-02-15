@@ -37,7 +37,7 @@
             
 
             <a href="login.html"> <button type="button" class="btn btn-primary me-2">Back to Login</button> </a>
-            <button type="button" class="btn btn-primary" style="float:right">Register</button>
+            <button type="submit" class="btn btn-primary" style="float:right">Register</button>
             
         </form>
     </div>
@@ -81,7 +81,13 @@
 
             createUserWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
             .then((credentials)=>{
-                console.log(error.code);
+                //console.log(credentials);
+
+                //stores data to RealTime DB
+                set(ref(db, 'UsersAuthList/' + credentials.user.uid),{ //change1
+                    firstname: FnameInp.value,
+                    lastname: LnameInp.value
+                });
             })
             .catch((error)=>{
                 alert(error.message);
