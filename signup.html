@@ -41,6 +41,8 @@
             <button type="submit" class="btn btn-secondary" style="float:right">Register</button>
             
         </form>
+		
+		<span id="logged-in" style="color: #BBF246; font-size: 15px; "> </span>
 		</div>
 		
 		<div style="margin-top: 100px; margin-right: -300px; text-align: center; color: #FFF; font-size: 22px;">
@@ -105,7 +107,8 @@
                     firstname: FnameInp.value,
                     lastname: LnameInp.value
                 });
-				setTimeout(backToLogin, 8000);
+				console.log("successfully logged in");
+				login_success();
             })
             .catch((error)=>{
                 alert(error.message);
@@ -115,8 +118,15 @@
         }
 
 		function backToLogin(){
-			var loginButton = document.getElementById("loginButton");
+			const loginButton = document.getElementById("loginButton");
 			loginButton.click();
+		}
+		
+		function login_success(){
+			console.log("notify successful login");
+			const notify_success = document.getElementById("logged-in");
+			notify_success.innerHTML = "Registration Successful, proceeding to log in page...";
+			setTimeout(backToLogin, 5000);
 		}
         MainForm.addEventListener('submit', RegisterUser);
         
