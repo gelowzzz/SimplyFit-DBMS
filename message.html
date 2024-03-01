@@ -42,7 +42,7 @@
             <div class="modal-header">
               <h5 class="modal-title" id="addRecordModal">Modal title</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
+                <span aria-hidden="true">X</span>
               </button>
             </div>
             <div class="modal-body">
@@ -55,7 +55,7 @@
           </div>
         </div>
 	</div>
-	<button type="button"  data-toggle="modal" data-target="#addRecordModal"> Add New Record </button>'
+	
     <!--Modal Ends-->
 
    
@@ -111,8 +111,6 @@
 		//-------FILLING THE TABLE-------//
 		var inpNo = 0;
 		async function AddItemsToTable(exercise, sets, reps, rest){
-		
-		
 			var tbody = document.getElementById('tbody1');
 			var trow = document.createElement('tr');
 			var td1 = document.createElement('td');
@@ -148,6 +146,13 @@
 				ftButtons.addEventListener('click', showModal);
 			});
 		}
-    </script>
+    
+		function closeModal() {
+		var modal = getElementById("addRecordModal");
+		var close = getElementsByClassname("close");
+		}
+	
+	
+	</script>
 </body>
 </html>
