@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johnny Sins Maker (Weight Loss)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body style="background-color:#3b3b3b">
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+    <div class="container">
+        <table class="table table-dark text-white">
+
+            <thead>
+                <th>ExNo.</th>
+                <th>Exercise</th>
+                <th>Sets</th>
+                <th>Reps</th>
+                <th>Rest Period</th>    
+                <th>Control Center</th>    
+            </thead>
+
+            <tbody id="tbody1">
+
+            </tbody>
+
+        </table>
+    </div>
+			
+
+    <!-- Button Triggers Modal
+    <button type="button" onclick="FillTboxes(null)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"> Add New Record </button> -->
+
+    <!--Add Record Modal - Modal Appears-->
+    <div class="modal fade" id="addRecordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addRecordModal">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Placeholder text for this demonstration of a vertically centered modal dialog.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+	</div>
+	<button type="button"  data-toggle="modal" data-target="#addRecordModal"> Add New Record </button>'
+    <!--Modal Ends-->
+
+   
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script> -->
+    <script type="module"> 
+		// Import the functions you need from the SDKs you need
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+		import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+		//import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+		// TODO: Add SDKs for Firebase products that you want to use
+		// https://firebase.google.com/docs/web/setup#available-libraries
+
+		// Your web app's Firebase configuration
+		const firebaseConfig = {
+		apiKey: "AIzaSyD1UWbJgBRxJNNG-tBkmkvzBySHjOdG9Pw",
+		authDomain: "simplyfit-db-management-system.firebaseapp.com",
+		databaseURL: "https://simplyfit-db-management-system-default-rtdb.firebaseio.com",
+		projectId: "simplyfit-db-management-system",
+		storageBucket: "simplyfit-db-management-system.appspot.com",
+		messagingSenderId: "57064033809",
+		appId: "1:57064033809:web:405028c18a557d8d85ebb0"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase();
+
+
+		//------GET ALL DATA---------//
+		async function SelectAllData(){
+			const workoutRef = ref(database, 'WorkoutList');
+			const snapshot = await get(workoutRef);
+
+			snapshot.forEach(childSnapshot => {
+				const { exercise, sets, reps, restTime } = childSnapshot.val();
+				AddItemsToTable(exercise, sets, reps, restTime);
+			});
+		}
+
+		window.onload = SelectAllData;
+		function showModal(){
+			var myModal = new bootstrap.Modal(document.getElementById('addRecordModal'));
+			myModal.toggle();
+		}
+		
+		/*
+		function fillTbox(){
+			**code here**
+		}
+		*/
+		//-------FILLING THE TABLE-------//
+		var inpNo = 0;
+		async function AddItemsToTable(exercise, sets, reps, rest){
+		
+		
+			var tbody = document.getElementById('tbody1');
+			var trow = document.createElement('tr');
+			var td1 = document.createElement('td');
+			var td2 = document.createElement('td');
+			var td3 = document.createElement('td');
+			var td4 = document.createElement('td');
+			var td5 = document.createElement('td');
+		
+			td1.innerHTML = ++inpNo;
+			td2.innerHTML = exercise;
+			td3.innerHTML = sets;
+			td4.innerHTML = reps;
+			td5.innerHTML = rest;
+
+			trow.appendChild(td1); trow.appendChild(td2); trow.appendChild(td3); trow.appendChild(td4); trow.appendChild(td5);
+
+			//contains both Add and Edit Button
+			var ControlDiv = document.createElement("div");
+			ControlDiv.innerHTML += '<button type="button"  class="showMod" data-toggle="modal" data-target="#addRecordModal"> Add New Record </button>'
+			ControlDiv.innerHTML += '<button type="button" class="fillTbox" data-toggle="modal" data-target="#exampleModalCenter"> Edit Record </button>'
+			trow.appendChild(ControlDiv);
+			tbody.appendChild(trow);
+			
+			const smButtons = document.querySelectorAll('.showMod');
+			smButtons.forEach(smButtons => {
+				console.log("1");	// Output the text content of each item
+				smButtons.addEventListener('click', showModal);
+			});
+			const ftButtons = document.querySelectorAll('.fillTbox');
+			// Loop through the selected elements
+			ftButtons.forEach(ftButtons => {
+				console.log("1");	// Output the text content of each item
+				ftButtons.addEventListener('click', showModal);
+			});
+		}
+    </script>
+</body>
+</html>
