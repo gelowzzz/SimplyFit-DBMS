@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimplyFit - Admin Control Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body style="background-color:#3b3b3b">
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+    <div id="tableContainer" class="container" style="width: 100% !important;">
+        <script> console.log("table here"); </script>
+    </div>
+			
+
+    <!-- Button Triggers Modal
+    <button type="button" onclick="FillTboxes(null)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"> Add New Record </button> -->
+
+    <!--Add Record Modal - Modal Appears-->
+    <div class="modal fade" id="addRecordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addRecordModal">Add Workout</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">x</span>
+              </button>
+            </div>
+            <div id="addModalContainer" class="modal-body">
+				<div id="addModal" class="container">
+
+				</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="saveAdd"class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+            </div>
+          </div>
+        </div>
+	</div>
+	<!--Edit Record Modal - Modal Appears-->
+	<div class="modal fade" id="editRecordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content ">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editRecordModal">Edit Workout</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">x</span>
+              </button>
+            </div>
+            <div class="modal-body">
+				<div id="editModal" class="container">
+        
+				</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="saveEdit" class="btn btn-primary" data-bs-dismiss="modal" >Save changes</button>
+            </div>
+          </div>
+        </div>
+	</div>
+	<!--Modal Ends-->
+</body>
+   
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script> -->
+    <script type="module"> 
+		// Import the functions you need from the SDKs you need
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+		import { getDatabase, get, ref, set, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+		//import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+		// TODO: Add SDKs for Firebase products that you want to use
+		// https://firebase.google.com/docs/web/setup#available-libraries
+
+		// Your web app's Firebase configuration
+		const firebaseConfig = {
+		apiKey: "AIzaSyD1UWbJgBRxJNNG-tBkmkvzBySHjOdG9Pw",
+		authDomain: "simplyfit-db-management-system.firebaseapp.com",
+		databaseURL: "https://simplyfit-db-management-system-default-rtdb.firebaseio.com",
+		projectId: "simplyfit-db-management-system",
+		storageBucket: "simplyfit-db-management-system.appspot.com",
+		messagingSenderId: "57064033809",
+		appId: "1:57064033809:web:405028c18a557d8d85ebb0"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase();
+
+
+		//------GET ALL DATA---------//
+		async function MainTablesData(node, addToTable, containerID, program){
+			const workoutRef = ref(database, node);
+			const snapshot = await get(workoutRef);
+			var lastKey = 0;
+			var tableID = createTables(program);
+			
+			
+			if (snapshot.exists()){
+				const workoutList = snapshot.val();
+				console.log(workoutList);
+				Object.keys(workoutList).forEach(key => {
+					const workout = workoutList[key];
+					
+					addToTable(key, workout.exercise, workout.sets, workout.reps, workout.restTime, tableID);
+					lastKey = key;
+				});
+				
+				lastKey++;
+				
+				var tableContainer = document.getElementById(containerID);
+				var ControlDiv = document.createElement("div");
+				ControlDiv.innerHTML += '<button type="button"  class="showMod" data-toggle="modal" data-target="#addRecordModal"> Add New Record </button>'
+				ControlDiv.innerHTML += '<button type="button" class="fillTbox" data-toggle="modal" data-target="#editRecordModal" > Edit Record </button>'
+				tableContainer.appendChild(ControlDiv);
+				const smButtons = document.querySelectorAll('.showMod');
+					smButtons.forEach(smButtons => {
+						smButtons.addEventListener('click', showAddRecordModal);
+					});
+				const ftButtons = document.querySelectorAll('.fillTbox');
+					ftButtons.forEach(ftButtons => {
+						ftButtons.addEventListener('click', showEditRecordModal);
+				});
+			}
+			
+		}
+		
+		async function ModalTablesData(node, addToTable, containerID, program){
+			const workoutRef = ref(database, node);
+			const snapshot = await get(workoutRef);
+			var lastKey = 0;
+			var tableID = createEditModalTables(containerID, program);
+			if (snapshot.exists()){
+				const workoutList = snapshot.val();
+				
+				
+				Object.keys(workoutList).forEach(key => {
+					const workout = workoutList[key];
+					console.log("modal table id: ", tableID);
+					addToTable(key, workout.exercise, workout.sets, workout.reps, workout.restTime, tableID);
+					lastKey = key;
+				});
+				
+				lastKey++;
+				
+				 
+			}
+			
+		}
+		
+
+		function addDesign(){
+		// Assuming your div container has an ID "tableContainer"
+		var divContainer = document.getElementById('tableContainer');
+
+		// Select all tables inside the div container
+		var tablesInsideDiv = divContainer.querySelectorAll('table');
+
+		// Now you can loop through the tables or perform any other operation
+		tablesInsideDiv.forEach(function(table) {
+			table.classList.add('table', 'table-dark', 'text-white');
+		});
+
+		}
+		
+		function showAddRecordModal(){
+			var myModal = new bootstrap.Modal(document.getElementById('addRecordModal'));
+			myModal.toggle();
+		}
+		function showEditRecordModal(){
+			var myModal = new bootstrap.Modal(document.getElementById('editRecordModal'));
+			myModal.toggle();
+		}
+		function loadButtonFunctions(){
+			var editBtn = document.getElementById("saveEdit").addEventListener("click", function() {
+				updateWorkout('tbody2');
+			});
+
+			var addBtn = document.getElementById("saveAdd").addEventListener("click", function() {
+				updateWorkout('tbody3');
+			});
+
+		}
+		
+		
+		//-------FILLING THE TABLE-------//
+		var inpNo = 0;
+		// dynamically create tables and table headers
+		
+		var IDNum = 1;
+		function createTables(program) {
+			var tableContainer = document.getElementById('tableContainer');
+			//create table and table heads, then assign dynamic ids
+			var tableName = 'table';
+			var tableBodyName = 'tbody';
+			
+			var tableID = dynamicTableId(tableName, IDNum);
+			var tbodyID = dynamicTableId(tableBodyName, IDNum);
+			IDNum++;
+			var table = document.createElement('table');
+			table.id = tableID;
+			table.style.width = '100%';
+			
+			
+			var tbody = document.createElement('tbody');
+			tbody.id = tbodyID;
+			
+			
+			//create headers
+			var headerNames = [program, "Exercise Key", "Exercise", "Sets", "Reps", "Rest Period"];
+			var thead = document.createElement('thead');
+			
+			var headerRow = document.createElement('tr');
+			for (var i = 0; i < headerNames.length; i++) {
+				var th = document.createElement('th');
+				th.textContent = headerNames[i];
+				headerRow.appendChild(th);
+			}
+			thead.appendChild(headerRow);
+			table.classList.add("table");
+			table.classList.add("table-dark");
+			table.classList.add("text-white");
+			table.appendChild(thead);
+			table.appendChild(tbody);
+			tableContainer.appendChild(table);	
+			return tableID;
+		}
+		
+		var modalIDNum = 1;
+		function createEditModalTables(container, program) {
+			var tableContainer = document.getElementById(container);
+			//create table and table heads, then assign dynamic ids
+			var tableName = 'modalTable';
+			var tableBodyName = 'modalTbody';
+			
+			var tableID = dynamicTableId(tableName, modalIDNum);
+			var tbodyID = dynamicTableId(tableBodyName, modalIDNum);
+			modalIDNum++;
+			var table = document.createElement('table');
+			table.id = tableID;
+			table.style.width = '100%';
+			
+			var tbody = document.createElement('tbody');
+			tbody.id = tbodyID;
+			
+			
+			//create headers
+			var headerNames = [program, "Exercise Key", "Exercise", "Sets", "Reps", "Rest Period"];
+			var thead = document.createElement('thead');
+			
+			var headerRow = document.createElement('tr');
+			for (var i = 0; i < headerNames.length; i++) {
+				var th = document.createElement('th');
+				th.textContent = headerNames[i];
+				headerRow.appendChild(th);
+			}
+			thead.appendChild(headerRow);
+			
+			table.appendChild(thead);
+			table.appendChild(tbody);
+			tableContainer.appendChild(table);		
+			return tableID;
+		}
+		
+		function dynamicTableId(tableName, tableNum) {
+			return tableName + tableNum;
+		}
+		
+		async function AddItemsToPageTable(key, exercise, sets, reps, rest, tableID, program){
+			var tbody = document.getElementById(tableID);
+			console.log(tableID);
+			var trow = document.createElement('tr');
+			var td1 = document.createElement('td');
+			var td2 = document.createElement('td');
+			var td3 = document.createElement('td');
+			var td4 = document.createElement('td');
+			var td5 = document.createElement('td');
+			var td6 = document.createElement('td');
+			
+		
+			td1.innerHTML = key;
+			td2.innerHTML = exercise;
+			td3.innerHTML = sets;
+			td4.innerHTML = reps;
+			td5.innerHTML = rest;
+			td6.innerHTML = " ";
+
+			trow.appendChild(td6); trow.appendChild(td1); trow.appendChild(td2); trow.appendChild(td3); trow.appendChild(td4); trow.appendChild(td5);
+			tbody.appendChild(trow);
+		}
+		async function AddItemsToModalTables(key, exercise, sets, reps, rest, tableID){
+		// create dynamic tables instead of filling them. append/add dynamic tables to existing modal div containers
+			var tbody = document.getElementById(tableID);
+			var trow = document.createElement('tr');
+			var td1 = document.createElement('td');
+			var td2 = document.createElement('td');
+			var td3 = document.createElement('td');
+			var td4 = document.createElement('td');
+			var td5 = document.createElement('td');
+			var td6 = document.createElement('td');
+		
+			td1.innerHTML = key;
+			td2.innerHTML = exercise;
+			td2.setAttribute('contenteditable', "true");
+			td3.innerHTML = sets;
+			td3.setAttribute('contenteditable', "true");
+			td4.innerHTML = reps;
+			td4.setAttribute('contenteditable', "true");
+			td5.innerHTML = rest;
+			td5.setAttribute('contenteditable', "true");
+			td6.innerHTML = "";
+
+			trow.appendChild(td6),trow.appendChild(td1); trow.appendChild(td2); trow.appendChild(td3); trow.appendChild(td4); trow.appendChild(td5);
+			tbody.appendChild(trow);
+		}
+		
+		async function AddItemsToTable3(key, exercise, sets, reps, rest){
+			var tbody = document.getElementById('tbody3');
+			var trow = document.createElement('tr');
+			var td1 = document.createElement('td');
+			var td2 = document.createElement('td');
+			var td3 = document.createElement('td');
+			var td4 = document.createElement('td');
+			var td5 = document.createElement('td');
+		
+			td1.innerHTML = key;
+			td2.setAttribute('contenteditable', "true");
+			
+			td3.setAttribute('contenteditable', "true");
+			
+			td4.setAttribute('contenteditable', "true");
+			
+			td5.setAttribute('contenteditable', "true");
+
+			trow.appendChild(td1); trow.appendChild(td2); trow.appendChild(td3); trow.appendChild(td4); trow.appendChild(td5);
+			tbody.appendChild(trow);
+		}
+
+		
+		function updateWorkout(table) {
+			var workoutList = document.getElementById(table);
+			var workout = workoutList.getElementsByTagName('tr');
+			
+			for (var i = 0; i < workout.length; i++) {
+				var workoutData = workout[i].getElementsByTagName('td');
+				
+				var exerciseKey = workoutData[0].innerText;
+				var exerciseName = workoutData[1].innerText;
+				var sets = workoutData[2].innerText;
+				var reps = workoutData[3].innerText;
+				var rest = workoutData[4].innerText;
+				
+				updateWorkoutData(exerciseKey, exerciseName, reps, rest, sets);
+				
+			}
+		}
+		
+		function addWorkout() {
+			var workoutList = document.getElementById('tbody2');
+			var workout = workoutList.getElementsByTagName('tr');
+			
+			for (var i = 0; i < workout.length; i++) {
+				var workoutData = workout[i].getElementsByTagName('td');
+				var exerciseKey = workoutData[0].innerText;
+				var exerciseName = workoutData[1].innerText;
+				var sets = workoutData[2].innerText;
+				var reps = workoutData[3].innerText;
+				var rest = workoutData[4].innerText;
+				
+				
+				updateWorkoutData(exerciseKey, exerciseName, reps, rest, sets);
+				
+			}
+		}
+		
+		function updateWorkoutData(exKey, exName, exReps, exRT, exSets) {
+			const database = getDatabase();
+			set(ref(database, 'WorkoutList/' + exKey), {
+				exercise : exName,
+				reps : exReps,
+				restTime : exRT,
+				sets : exSets
+			});
+		}
+		
+		async function fillMainTables(parentNode) {
+			const workoutRef = ref(database, parentNode);
+			const snapshot = await get(workoutRef);
+			
+			var nodesize = snapshot.size;
+			console.log("nodes: " , nodesize);
+			var counter = 1;
+		
+			while (counter <= nodesize) {
+				var newPath = parentNode + "/WorkoutList" + counter;
+				await MainTablesData(newPath, AddItemsToPageTable, "tableContainer", parentNode);
+				counter++;
+			}
+		}
+		
+		async function fillModalTables(parentNode, modalContainerID) {
+			const workoutRef = ref(database, parentNode);
+			const snapshot = await get(workoutRef);
+			
+			var nodesize = snapshot.size;
+			console.log("nodes: " , nodesize);
+			var counter = 1;
+			
+			while (counter <= nodesize) {
+				var newPath = parentNode + "/WorkoutList" + counter;
+				await ModalTablesData(newPath, AddItemsToModalTables, modalContainerID, parentNode);
+				counter++;
+			}
+		}
+		
+		
+		
+
+		window.addEventListener('load', function() {
+			fillMainTables('JohhnySinsMaker');
+			fillMainTables('30DayFatBurner');
+			
+			fillModalTables('JohhnySinsMaker', 'addModal');
+			fillModalTables('JohhnySinsMaker', 'editModal');
+			fillModalTables('30DayFatBurner', 'addModal');
+			fillModalTables('30DayFatBurner', 'editModal');
+			
+			
+			
+			
+			loadButtonFunctions();
+			//addDesign();
+			
+		});
+		
+		//fix Uncaught (in promise) TypeError: tableContainer is null
+		//make add record and edit record button refer to the table they are in
+    </script>
+
+</html>
